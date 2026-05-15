@@ -1,4 +1,4 @@
-# 🚀 DELTARESERVE
+#  DELTARESERVE
 
 **Plateforme de Réservation Intelligente de Salles de Fête et de Conférence**
 
@@ -7,11 +7,11 @@
 
 ---
 
-## 📋 Description
+##  Description
 
 DELTARESERVE est une plateforme de réservation intelligente permettant aux utilisateurs de rechercher, consulter et réserver des salles de fête ou de conférence. L'application utilise une architecture **microservices** avec communication **gRPC**, messagerie **Apache Kafka**, et une **API Gateway** exposant des endpoints **REST** et **GraphQL**.
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 ┌─────────────┐      REST / GraphQL      ┌──────────────┐
@@ -34,7 +34,7 @@ DELTARESERVE est une plateforme de réservation intelligente permettant aux util
                                       └─────────┘
 ```
 
-## 📁 Structure du Projet
+##  Structure du Projet
 
 ```
 DELTARESERVE/
@@ -73,13 +73,13 @@ DELTARESERVE/
 └── README.md
 ```
 
-## 🛠️ Prérequis
+##  Prérequis
 
 - **Node.js** v18+ 
 - **Docker** et **Docker Compose** (pour Kafka)
 - **npm** (inclus avec Node.js)
 
-## 🚀 Installation et Exécution
+##  Installation et Exécution
 
 ### 1. Installer les dépendances
 
@@ -121,7 +121,7 @@ cd api-gateway && node src/index.js
 
 > **Note** : Les services fonctionnent même sans Kafka (les événements ne seront simplement pas publiés).
 
-## 📡 Endpoints REST
+##  Endpoints REST
 
 | Méthode | Endpoint | Description |
 |---------|----------|-------------|
@@ -139,7 +139,7 @@ cd api-gateway && node src/index.js
 | GET | `/api/notifications` | Historique des notifications |
 | GET | `/api/payments` | Liste des paiements |
 
-## 📊 Requêtes GraphQL
+##  Requêtes GraphQL
 
 ```graphql
 # Lister les salles avec champs personnalisés
@@ -173,7 +173,7 @@ mutation {
 }
 ```
 
-## 📨 Topics Kafka
+##  Topics Kafka
 
 | Topic | Producteur | Consommateur | Déclencheur |
 |-------|------------|--------------|-------------|
@@ -182,7 +182,7 @@ mutation {
 | `payment.processed` | notification-service | booking-service | Paiement traité |
 | `notification.sent` | notification-service | — (log) | Confirmation envoyée |
 
-## 🗄️ Bases de Données
+##  Bases de Données
 
 | Microservice | Type | Technologie | Justification |
 |---|---|---|---|
@@ -190,7 +190,7 @@ mutation {
 | booking-service | SQL | SQLite3 | Intégrité transactionnelle |
 | notification-service | NoSQL | JSON/RxDB | Flexibilité des logs |
 
-## 📡 Ports
+##  Ports
 
 | Service | Port |
 |---------|------|
