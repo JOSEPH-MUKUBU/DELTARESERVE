@@ -1,0 +1,199 @@
+{
+  "info": {
+    "name": "DELTARESERVE - Tests API (REST & GraphQL)",
+    "description": "Collection de tests pour la plateforme DELTARESERVE. Contient les requêtes REST et GraphQL. Pour gRPC, importez les fichiers .proto directement dans Postman.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. API REST",
+      "item": [
+        {
+          "name": "1. Salles (Rooms)",
+          "item": [
+            {
+              "name": "Lister les salles",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/api/rooms",
+                  "protocol": "http",
+                  "host": ["localhost"],
+                  "port": "3000",
+                  "path": ["api", "rooms"]
+                }
+              }
+            },
+            {
+              "name": "Créer une salle",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nom\": \"Salle de l'Étoile\",\n  \"type\": \"fete\",\n  \"capacite\": 150,\n  \"prix\": 800.0,\n  \"localisation\": \"Lyon\",\n  \"description\": \"Une belle salle spacieuse.\",\n  \"equipements\": [\"DJ\", \"Lumières\"]\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:3000/api/rooms",
+                  "protocol": "http",
+                  "host": ["localhost"],
+                  "port": "3000",
+                  "path": ["api", "rooms"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Réservations (Bookings)",
+          "item": [
+            {
+              "name": "Lister les réservations",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/api/bookings",
+                  "protocol": "http",
+                  "host": ["localhost"],
+                  "port": "3000",
+                  "path": ["api", "bookings"]
+                }
+              }
+            },
+            {
+              "name": "Créer une réservation",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"room_id\": \"room-001\",\n  \"user_id\": \"user-123\",\n  \"user_name\": \"Joseph Mukubu\",\n  \"user_email\": \"joseph@test.com\",\n  \"date_debut\": \"2026-08-10\",\n  \"date_fin\": \"2026-08-12\",\n  \"motif\": \"Fête d'anniversaire\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:3000/api/bookings",
+                  "protocol": "http",
+                  "host": ["localhost"],
+                  "port": "3000",
+                  "path": ["api", "bookings"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Notifications & Paiements",
+          "item": [
+            {
+              "name": "Historique Notifications",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/api/notifications",
+                  "protocol": "http",
+                  "host": ["localhost"],
+                  "port": "3000",
+                  "path": ["api", "notifications"]
+                }
+              }
+            },
+            {
+              "name": "Historique Paiements",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/api/payments",
+                  "protocol": "http",
+                  "host": ["localhost"],
+                  "port": "3000",
+                  "path": ["api", "payments"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. GraphQL",
+      "item": [
+        {
+          "name": "Query: Lister les Salles",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query {\n  rooms {\n    id\n    nom\n    type\n    capacite\n    prix\n    localisation\n    disponible\n  }\n}",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/graphql",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["graphql"]
+            }
+          }
+        },
+        {
+          "name": "Query: Liste des Réservations",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query {\n  allBookings {\n    id\n    user_name\n    date_debut\n    statut\n    montant\n    room {\n      nom\n      localisation\n    }\n  }\n}",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/graphql",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["graphql"]
+            }
+          }
+        },
+        {
+          "name": "Mutation: Créer Réservation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation {\n  createBooking(input: {\n    room_id: \"room-002\"\n    user_id: \"user-gql-99\"\n    user_name: \"Client API\"\n    user_email: \"client@api.com\"\n    date_debut: \"2026-09-01\"\n    date_fin: \"2026-09-02\"\n    motif: \"Test GraphQL Postman\"\n  }) {\n    id\n    statut\n    montant\n  }\n}",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/graphql",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["graphql"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

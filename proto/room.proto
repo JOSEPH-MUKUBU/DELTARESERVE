@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package room;
+
+// Service de gestion des salles
+service RoomService {
+  // Récupérer toutes les salles
+  rpc GetAllRooms (GetAllRoomsRequest) returns (RoomList);
+  
+  // Récupérer une salle par ID
+  rpc GetRoom (GetRoomRequest) returns (Room);
+  
+  // Rechercher des salles par critères
+  rpc SearchRooms (SearchRoomsRequest) returns (RoomList);
+  
+  // Créer une nouvelle salle
+  rpc CreateRoom (CreateRoomRequest) returns (Room);
+  
+  // Mettre à jour une salle
+  rpc UpdateRoom (UpdateRoomRequest) returns (Room);
+  
+  // Supprimer une salle
+  rpc DeleteRoom (DeleteRoomRequest) returns (DeleteRoomResponse);
+  
+  // Vérifier la disponibilité d'une salle
+  rpc CheckAvailability (CheckAvailabilityRequest) returns (AvailabilityResponse);
+}
+
+// === Messages ===
+
+message Room {
+  string id = 1;
+  string nom = 2;
+  string type = 3;           // "fete" ou "conference"
+  int32 capacite = 4;
+  string equipements = 5;    // JSON string des équipements
+  double prix = 6;           // Prix par jour
+  string localisation = 7;   // Ville
+  string description = 8;
+  bool disponible = 9;
+  string created_at = 10;
+  string updated_at = 11;
+}
+
+message RoomList {
+  repeated Room rooms = 1;
+  int32 total = 2;
+}
+
+message GetAllRoomsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetRoomRequest {
+  string id = 1;
+}
+
+message SearchRoomsRequest {
+  string type = 1;
+  int32 capacite_min = 2;
+  string localisation = 3;
+  double prix_max = 4;
+}
+
+message CreateRoomRequest {
+  string nom = 1;
+  string type = 2;
+  int32 capacite = 3;
+  string equipements = 4;
+  double prix = 5;
+  string localisation = 6;
+  string description = 7;
+}
+
+message UpdateRoomRequest {
+  string id = 1;
+  string nom = 2;
+  string type = 3;
+  int32 capacite = 4;
+  string equipements = 5;
+  double prix = 6;
+  string localisation = 7;
+  string description = 8;
+  bool disponible = 9;
+}
+
+message DeleteRoomRequest {
+  string id = 1;
+}
+
+message DeleteRoomResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message CheckAvailabilityRequest {
+  string room_id = 1;
+  string date_debut = 2;
+  string date_fin = 3;
+}
+
+message AvailabilityResponse {
+  bool disponible = 1;
+  string room_id = 2;
+  string message = 3;
+}

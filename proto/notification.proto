@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package notification;
+
+// Service de notifications et paiement
+service NotificationService {
+  // Envoyer une notification
+  rpc SendNotification (SendNotificationRequest) returns (Notification);
+  
+  // Récupérer l'historique des notifications
+  rpc GetNotifications (GetNotificationsRequest) returns (NotificationList);
+  
+  // Récupérer une notification par ID
+  rpc GetNotification (GetNotificationRequest) returns (Notification);
+  
+  // Traiter un paiement
+  rpc ProcessPayment (ProcessPaymentRequest) returns (PaymentResponse);
+  
+  // Récupérer les statuts de paiement
+  rpc GetPayments (GetPaymentsRequest) returns (PaymentList);
+  
+  // Récupérer un paiement par ID
+  rpc GetPayment (GetPaymentRequest) returns (PaymentResponse);
+}
+
+// === Messages ===
+
+message Notification {
+  string id = 1;
+  string type = 2;            // "confirmation", "annulation", "paiement", "rappel"
+  string destinataire = 3;    // Email du destinataire
+  string sujet = 4;
+  string contenu = 5;
+  string statut = 6;          // "envoyee", "echouee", "en_attente"
+  string booking_id = 7;
+  string created_at = 8;
+}
+
+message NotificationList {
+  repeated Notification notifications = 1;
+  int32 total = 2;
+}
+
+message SendNotificationRequest {
+  string type = 1;
+  string destinataire = 2;
+  string sujet = 3;
+  string contenu = 4;
+  string booking_id = 5;
+}
+
+message GetNotificationsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string type = 3;
+}
+
+message GetNotificationRequest {
+  string id = 1;
+}
+
+message ProcessPaymentRequest {
+  string booking_id = 1;
+  double montant = 2;
+  string user_id = 3;
+  string user_email = 4;
+  string methode = 5;         // "carte", "virement", "especes"
+}
+
+message PaymentResponse {
+  string id = 1;
+  string booking_id = 2;
+  double montant = 3;
+  string statut = 4;          // "reussi", "echoue", "en_attente"
+  string methode = 5;
+  string transaction_id = 6;
+  string user_id = 7;
+  string created_at = 8;
+}
+
+message PaymentList {
+  repeated PaymentResponse payments = 1;
+  int32 total = 2;
+}
+
+message GetPaymentsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetPaymentRequest {
+  string id = 1;
+}

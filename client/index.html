@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DELTARESERVE - Plateforme de Réservation Intelligente de Salles de Fête et de Conférence">
+  <title>DELTARESERVE - Réservation de Salles</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top border-bottom">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="#">
+        <span class="bg-primary text-white p-1 rounded me-2">D</span>DELTARESERVE
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto nav-pills">
+          <li class="nav-item"><button class="nav-link active" data-section="home" id="nav-home">Accueil</button></li>
+          <li class="nav-item"><button class="nav-link" data-section="rooms" id="nav-rooms">Salles</button></li>
+          <li class="nav-item"><button class="nav-link" data-section="bookings" id="nav-bookings">Réservations</button></li>
+          <li class="nav-item"><button class="nav-link" data-section="notifications" id="nav-notifs">Notifications</button></li>
+          <li class="nav-item"><button class="nav-link" data-section="payments" id="nav-payments">Paiements</button></li>
+          <li class="nav-item"><button class="nav-link" data-section="graphql" id="nav-graphql">GraphQL</button></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <!-- HOME -->
+    <div id="section-home" class="page-section active">
+      <div class="text-center py-5">
+        <h2 class="display-4 fw-bold mb-4 text-primary">Réservez l'espace parfait pour votre événement</h2>
+        <p class="lead text-muted mx-auto mb-5" style="max-width: 700px;">
+          DELTARESERVE connecte salles de fête et de conférence en temps réel grâce à une architecture microservices moderne.
+        </p>
+        <div class="d-flex justify-content-center gap-3 mb-5">
+          <button class="btn btn-primary btn-lg px-4" onclick="navigate('rooms')">Explorer les salles</button>
+          <button class="btn btn-outline-light btn-lg px-4" onclick="navigate('bookings')">Mes réservations</button>
+        </div>
+        
+        <div class="row text-center mt-5 justify-content-center">
+          <div class="col-md-3">
+            <div class="card bg-body-tertiary border-0 py-4 shadow-sm">
+              <div class="display-5 fw-bold text-primary" id="stat-rooms">-</div>
+              <div class="text-uppercase text-muted small mt-2 fw-semibold">Salles</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-body-tertiary border-0 py-4 shadow-sm">
+              <div class="display-5 fw-bold text-primary" id="stat-bookings">-</div>
+              <div class="text-uppercase text-muted small mt-2 fw-semibold">Réservations</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-body-tertiary border-0 py-4 shadow-sm">
+              <div class="display-5 fw-bold text-primary" id="stat-notifs">-</div>
+              <div class="text-uppercase text-muted small mt-2 fw-semibold">Notifications</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROOMS -->
+    <div id="section-rooms" class="page-section d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <h3 class="fw-bold mb-0">Catalogue des Salles</h3>
+        <button class="btn btn-primary" onclick="openModal('modalCreateRoom')">Nouvelle Salle</button>
+      </div>
+      
+      <div class="card bg-body-tertiary border-0 mb-4 shadow-sm">
+        <div class="card-body">
+          <form class="row g-3" onsubmit="event.preventDefault(); searchRooms();">
+            <div class="col-md-4">
+              <input type="text" class="form-control" id="search-location" placeholder="Rechercher une ville...">
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="filter-type">
+                <option value="">Tous les types</option>
+                <option value="fete">Fête</option>
+                <option value="conference">Conférence</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <input type="number" class="form-control" id="filter-capacity" placeholder="Capacité min">
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+              <button type="submit" class="btn btn-primary flex-grow-1">Rechercher</button>
+              <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('search-location').value=''; document.getElementById('filter-type').value=''; document.getElementById('filter-capacity').value=''; loadRooms();">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <div id="rooms-container" class="row g-4"></div>
+    </div>
+
+    <!-- BOOKINGS -->
+    <div id="section-bookings" class="page-section d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <h3 class="fw-bold mb-0">Réservations</h3>
+        <button class="btn btn-primary" onclick="openCreateBookingModal()">Nouvelle Réservation</button>
+      </div>
+      
+      <div class="btn-group mb-4">
+        <button type="button" class="btn btn-outline-primary active" id="btn-filter-all" onclick="filterBookings('all', this)">Toutes</button>
+        <button type="button" class="btn btn-outline-warning" id="btn-filter-attente" onclick="filterBookings('en_attente', this)">En attente</button>
+        <button type="button" class="btn btn-outline-success" id="btn-filter-confirmee" onclick="filterBookings('confirmee', this)">Confirmées</button>
+        <button type="button" class="btn btn-outline-danger" id="btn-filter-annulee" onclick="filterBookings('annulee', this)">Annulées</button>
+      </div>
+      
+      <div id="bookings-container" class="row g-4"></div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div id="section-notifications" class="page-section d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <h3 class="fw-bold mb-0">Notifications</h3>
+        <button class="btn btn-outline-secondary" onclick="loadNotifications()">Actualiser</button>
+      </div>
+      <div id="notifications-container" class="row g-4"></div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div id="section-payments" class="page-section d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <h3 class="fw-bold mb-0">Paiements</h3>
+        <button class="btn btn-outline-secondary" onclick="loadPayments()">Actualiser</button>
+      </div>
+      <div class="card bg-body-tertiary border-0 shadow-sm">
+        <div class="card-body p-0 table-responsive">
+          <div id="payments-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRAPHQL -->
+    <div id="section-graphql" class="page-section d-none">
+      <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <h3 class="fw-bold mb-0">Console GraphQL</h3>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <label class="form-label text-uppercase fw-bold text-muted small">Requête GraphQL</label>
+          <textarea id="graphql-query" class="form-control font-monospace mb-3" style="min-height:300px; font-size: 0.85rem;" spellcheck="false">query {
+  rooms {
+    id
+    nom
+    type
+    capacite
+    prix
+    localisation
+    equipements
+    disponible
+  }
+}</textarea>
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-primary" onclick="executeGraphQL()">Exécuter</button>
+            <button class="btn btn-outline-secondary btn-sm" onclick="setGraphQLQuery('rooms')">Salles</button>
+            <button class="btn btn-outline-secondary btn-sm" onclick="setGraphQLQuery('bookings')">Réservations</button>
+            <button class="btn btn-outline-secondary btn-sm" onclick="setGraphQLQuery('notifications')">Notifications</button>
+            <button class="btn btn-outline-secondary btn-sm" onclick="setGraphQLQuery('mutation')">Mutation</button>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <label class="form-label text-uppercase fw-bold text-muted small">Résultat</label>
+          <pre id="graphql-result" class="form-control font-monospace bg-dark text-success overflow-auto" style="min-height:300px; font-size: 0.85rem;">En attente d'exécution...</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Create Room -->
+  <div class="modal fade" id="modalCreateRoom" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header border-bottom-0">
+          <h5 class="modal-title fw-bold">Nouvelle Salle</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form onsubmit="createRoom(event)">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Nom de la salle</label>
+              <input type="text" class="form-control" id="room-nom" required placeholder="Ex: Salle Diamant">
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Type</label>
+                <select class="form-select" id="room-type" required>
+                  <option value="fete">Fête</option>
+                  <option value="conference">Conférence</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Capacité</label>
+                <input type="number" class="form-control" id="room-capacite" required placeholder="100">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Prix / jour (€)</label>
+                <input type="number" step="0.01" class="form-control" id="room-prix" required placeholder="500">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Ville</label>
+                <input type="text" class="form-control" id="room-localisation" required placeholder="Paris">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Description</label>
+              <textarea class="form-control" id="room-description" rows="3" placeholder="Description de la salle..."></textarea>
+            </div>
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Équipements (séparés par virgule)</label>
+              <input type="text" class="form-control" id="room-equipements" placeholder="WiFi, vidéoprojecteur, sono">
+            </div>
+            <div class="d-flex justify-content-end gap-2 border-top pt-3">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-primary">Créer la salle</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Create Booking -->
+  <div class="modal fade" id="modalCreateBooking" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header border-bottom-0">
+          <h5 class="modal-title fw-bold">Nouvelle Réservation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form onsubmit="createBooking(event)">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Salle</label>
+              <select class="form-select" id="booking-room" required></select>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Nom</label>
+                <input type="text" class="form-control" id="booking-name" required placeholder="Jean Dupont">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Email</label>
+                <input type="email" class="form-control" id="booking-email" required placeholder="jean@email.com">
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Date début</label>
+                <input type="date" class="form-control" id="booking-start" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Date fin</label>
+                <input type="date" class="form-control" id="booking-end" required>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Motif</label>
+              <textarea class="form-control" id="booking-motif" rows="2" placeholder="Motif de la réservation..."></textarea>
+            </div>
+            <div class="d-flex justify-content-end gap-2 border-top pt-3">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-primary">Réserver</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "deltareserve",
+  "version": "1.0.0",
+  "description": "Plateforme de Réservation Intelligente de Salles de Fête et de Conférence",
+  "author": "Joseph Mukubu Kapoya",
+  "private": true,
+  "scripts": {
+    "start:rooms": "cd room-service && node src/index.js",
+    "start:bookings": "cd booking-service && node src/index.js",
+    "start:notifications": "cd notification-service && node src/index.js",
+    "start:gateway": "cd api-gateway && node src/index.js",
+    "install:all": "cd room-service && npm install && cd ../booking-service && npm install && cd ../notification-service && npm install && cd ../api-gateway && npm install",
+    "kafka:start": "docker-compose up -d",
+    "kafka:stop": "docker-compose down"
+  }
+}

@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package booking;
+
+// Service de gestion des réservations
+service BookingService {
+  // Créer une réservation
+  rpc CreateBooking (CreateBookingRequest) returns (Booking);
+  
+  // Récupérer une réservation par ID
+  rpc GetBooking (GetBookingRequest) returns (Booking);
+  
+  // Récupérer toutes les réservations
+  rpc GetAllBookings (GetAllBookingsRequest) returns (BookingList);
+  
+  // Récupérer les réservations d'un utilisateur
+  rpc GetUserBookings (GetUserBookingsRequest) returns (BookingList);
+  
+  // Modifier une réservation
+  rpc UpdateBooking (UpdateBookingRequest) returns (Booking);
+  
+  // Annuler une réservation
+  rpc CancelBooking (CancelBookingRequest) returns (Booking);
+  
+  // Mettre à jour le statut d'une réservation
+  rpc UpdateBookingStatus (UpdateBookingStatusRequest) returns (Booking);
+}
+
+// === Messages ===
+
+message Booking {
+  string id = 1;
+  string room_id = 2;
+  string user_id = 3;
+  string user_name = 4;
+  string user_email = 5;
+  string date_debut = 6;
+  string date_fin = 7;
+  string statut = 8;         // "en_attente", "confirmee", "annulee"
+  double montant = 9;
+  string motif = 10;         // Motif de la réservation
+  string created_at = 11;
+  string updated_at = 12;
+}
+
+message BookingList {
+  repeated Booking bookings = 1;
+  int32 total = 2;
+}
+
+message CreateBookingRequest {
+  string room_id = 1;
+  string user_id = 2;
+  string user_name = 3;
+  string user_email = 4;
+  string date_debut = 5;
+  string date_fin = 6;
+  string motif = 7;
+}
+
+message GetBookingRequest {
+  string id = 1;
+}
+
+message GetAllBookingsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetUserBookingsRequest {
+  string user_id = 1;
+}
+
+message UpdateBookingRequest {
+  string id = 1;
+  string date_debut = 2;
+  string date_fin = 3;
+  string motif = 4;
+}
+
+message CancelBookingRequest {
+  string id = 1;
+  string motif_annulation = 2;
+}
+
+message UpdateBookingStatusRequest {
+  string id = 1;
+  string statut = 2;
+}
